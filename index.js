@@ -11,7 +11,6 @@ mongoose.connect(config.DATABASE)
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use('/api', routes);
-
 const port = process.env.PORT || 3001;
 app.listen(port,()=>{
     console.log(`SERVER RUNNNING at port=${port}`);

@@ -22,9 +22,29 @@ user.get('/', (req,res)=>{
 user.get('/getone',(req,res)=>{
     User.findOne({email:req.query.email})
 })
+user.get('/login',(req,res)=>{
+    User.findOne({email:req.query.email},(err,doc)=>{
+        if(err) res.status(400).send(error)
+        if(!doc){
+            res.status(202).send({})
+        }else{
+            doc.comparePassword(req.query.password,(err,ismatch)=>{
+                if(err) res.status(400).send(error)
+                if(ismatch){
+                    res.status(200).send(doc)
+                }else{
+                    res.status(204).send({})
+                }
+            })
+        }
+
+    })
+})
 
 //post
 user.post('/register',(req,res)=>{
+    console.log(req.body);
+    
     let newUser = new User(req.body);
     newUser.code = randomstring.generate({
         length: 6,
@@ -32,28 +52,11 @@ user.post('/register',(req,res)=>{
         });
     //SendMailNewCode(newUser.code, req.body.email);
     newUser.save((err,doc)=>{
-        if(err) return res.status(400).send({success:false, error:err})
+        if(err) return res.status(400).send(err)
         res.status(200).send(doc);
     })
 })
-user.post('/login',(req,res)=>{
-    User.findOne({email:req.query.email},(err,doc)=>{
-        if(err) res.status(400).send({success:false,error:true})
-        if(!doc){
-            res.status(200).send({success:false, found:false})
-        }else{
-            doc.comparePassword(req.query.password,(err,ismatch)=>{
-                if(err) res.status(400).send({success:false,error:true})
-                if(ismatch){
-                    res.status(200).send({success:true,match:true,error:false,user:doc})
-                }else{
-                    res.status(200).send({success:false,match:false,error:false})
-                }
-            })
-        }
 
-    })
-})
 user.post('/verifyemail',(req,res)=>{
     User.findOne({_id:req.query._id},(err,user)=>{
         if(err) return res.status(400).send({success:false, error:err})

@@ -8,8 +8,8 @@ routes.use('/expense', expense);
 routes.use('/income', income)
 
 
-routes.get('/', (req, res) => {
-  res.status(200).send('connected');
+routes.get('/test', (req, res) => {
+  res.status(200).send({"value":"connected"});
 });
 
 module.exports = routes;
